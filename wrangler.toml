@@ -1,5 +1,3 @@
 name = "datasearch"
 main = "data.js"
 
-wrangler secret put GOOGLE_API_KEY
-wrangler secret put GOOGLE_CX
