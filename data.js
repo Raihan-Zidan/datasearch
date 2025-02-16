@@ -15,6 +15,7 @@ export default {
 
         const apiKey = env.GOOGLE_API_KEY;
         const cx = env.GOOGLE_CX;
+        console.log(env.GOOGLE_API_KEY, env.GOOGLE_CX);
         const googleSearchUrl = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&start=${startIndex}&key=${apiKey}&cx=${cx}${safeSearch}${idLang}`;
 
         try {
