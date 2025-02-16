@@ -30,22 +30,33 @@ async function fetchDuckDuckGoData(url) {
   const duckduckgoURL = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&skip_disambig=1&m=${generateRandomString(5)}`;
 
   try {
-    const response = await fetch(duckduckgoURL);
+    const response = await fetch(duckduckgoURL, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      return new Response(JSON.stringify({ error: "Gagal mengambil data dari DuckDuckGo (Status: " + response.status + ")" }), {
+        headers: { "Content-Type": "application/json" },
+        status: response.status,
+      });
+    }
+
     let results = await response.json();
 
-    // 🔥 Filter data agar lebih ringan
     let filteredData = {
       title: results.Heading || "",
       image: results.Image ? `https://datasearch.raihan-zidan2709.workers.dev/images${results.Image}` : "",
       source: results.AbstractSource || "",
       snippet: results.Abstract || "",
-      abstractURL: results.AbstractURL || "",
-      infobox: results.Infobox ? results.Infobox.content : []
+      abstract_url: results.AbstractURL || "",
+      infobox: results.Infobox ? results.Infobox.content : [],
     };
 
-    // 🔥 Cek apakah ada "Capital" di dalam Infobox
-    if (filteredData.Infobox.some(item => item.label === "Capital")) {
-      filteredData.type = "country"; // Tambahkan type: country
+    if (filteredData.infobox.some(item => item.label === "Capital")) {
+      filteredData.type = "country";
     }
 
     return new Response(JSON.stringify(filteredData), {
