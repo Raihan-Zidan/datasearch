@@ -1,3 +1,5 @@
 name = "datasearch"
 main = "data.js"
-compatibility_date = "2024-02-16"
+
+wrangler secret put GOOGLE_API_KEY
+wrangler secret put GOOGLE_CX
