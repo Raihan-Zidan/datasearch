@@ -16,7 +16,7 @@ async function fetchDuckDuckGoData(url) {
   const query = url.searchParams.get("q");
 
   if (!query) {
-    return new Response(JSON.stringify({ error: "Nyari apa hayooo?" }), {
+    return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
       headers: { "Content-Type": "application/json" },
       status: 400,
     });
@@ -31,7 +31,12 @@ async function fetchDuckDuckGoData(url) {
 
   try {
     const response = await fetch(duckduckgoURL);
-    const results = await response.json();
+    let results = await response.json();
+
+    // 🔥 Cek apakah ada "Capital" di dalam Infobox
+    if (results.Infobox?.content?.some(item => item.label === "Capital")) {
+      results.type = "country"; // Tambahkan type: country
+    }
 
     return new Response(JSON.stringify(results), {
       headers: {
@@ -58,7 +63,6 @@ async function proxyGambar(request) {
     return new Response(null, { status: 204 }); // Tidak ada gambar, kosongkan respons
   }
 
-  // Tambahkan "/i/" sebelum nama file gambar
   const imageUrl = `https://duckduckgo.com/i/${imagePath}`;
 
   try {
