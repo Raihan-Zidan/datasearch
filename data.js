@@ -1,37 +1,18 @@
 export default {
-    async fetch(request, env) {
-        const url = new URL(request.url);
-        const query = url.searchParams.get("q");
-        const startIndex = url.searchParams.get("start") || 0;
-        const safeSearch = url.searchParams.get("sf") == 1 ? "&safe=active" : "";
-        const idLang = url.searchParams.get("idlang") ? "&gl=id&lr=lang_id&hl=id" : "";
-        
-        if (!query) {
-            return new Response(JSON.stringify({ error: "Query parameter 'q' is required" }), {
-                headers: { "Content-Type": "application/json" },
-                status: 400,
-            });
-        }
+  async fetch(request) {
+    const url = new URL(request.url);
+    const query = url.searchParams.get("q");
 
-        const apiKey = env.GOOGLE_API_KEY;
-        const cx = env.GOOGLE_CX;
-        console.log(env.GOOGLE_API_KEY, env.GOOGLE_CX);
-        const googleSearchUrl = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&start=${startIndex}&key=${apiKey}&cx=${cx}${safeSearch}${idLang}`;
+    // API Key langsung dalam kode (tidak sebagai secret)
+    const apiKey = "ac297d92e17eeec5536517574b560f560b863c0de8575884503724302442676f";  
 
-        try {
-            const response = await fetch(googleSearchUrl);
-            const results = await response.json();
+    const serpApiUrl = `https://serpapi.com/search.json?engine=google&q=${query}&api_key=${apiKey}`;
 
-            return new Response(JSON.stringify(results, null, 2), {
-                headers: { "Content-Type": "application/json" },
-                status: response.status,
-            });
-        } catch (error) {
-            return new Response(JSON.stringify({ error: "Failed to fetch search results" }), {
-                headers: { "Content-Type": "application/json" },
-                status: 500,
-            });
-        }
-    },
+    const response = await fetch(serpApiUrl);
+    const data = await response.json();
+
+    return new Response(JSON.stringify(data), {
+      headers: { "Content-Type": "application/json" },
+    });
+  },
 };
-
