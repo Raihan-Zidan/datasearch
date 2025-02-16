@@ -1,3 +1,8 @@
 name = "datasearch"
-main = "data.js"  # Pastikan ini sesuai dengan file utama lo
+main = "index.js"
 compatibility_date = "2024-02-16"
+
+[vars]
+GOOGLE_API_KEY = "AIzaSyD4KHQg1v9wFVlaKEVVVlZpiq8Y8L4UouI
+"
+GOOGLE_CX = "435bdb05f0b5e47bb"
