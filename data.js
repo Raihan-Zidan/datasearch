@@ -14,7 +14,7 @@ export default {
 async function fetchDuckDuckGoData(url) {
   const query = url.searchParams.get("q");
 
-  if (!query) {
+  if (!query || query.toLowerCase().includes("israel")) {
     return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
       headers: { "Content-Type": "application/json" },
       status: 400,
