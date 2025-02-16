@@ -16,7 +16,7 @@ async function fetchDuckDuckGoData(url) {
   const query = url.searchParams.get("q");
 
   if (!query) {
-    return new Response(JSON.stringify({ error: "Parameter 'q' diperlukan" }), {
+    return new Response(JSON.stringify({ error: "Nyari apa hayooo?" }), {
       headers: { "Content-Type": "application/json" },
       status: 400,
     });
