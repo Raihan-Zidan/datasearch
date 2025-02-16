@@ -11,7 +11,6 @@ export default {
   },
 };
 
-// Fungsi untuk menangani pencarian DuckDuckGo
 async function fetchDuckDuckGoData(url) {
   const query = url.searchParams.get("q");
 
@@ -38,7 +37,7 @@ async function fetchDuckDuckGoData(url) {
     });
 
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: "Gagal mengambil data dari DuckDuckGo (Status: " + response.status + ")" }), {
+      return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
         headers: { "Content-Type": "application/json" },
         status: response.status,
       });
@@ -48,16 +47,13 @@ async function fetchDuckDuckGoData(url) {
 
     let filteredData = {
       title: results.Heading || "",
-      image: results.Image ? `https://datasearch.raihan-zidan2709.workers.dev/images${results.Image}` : "",
+      type: results.Infobox?.content?.some(item => item.label === "Capital") ? "country" : "",
+      image: results.Image ? `https://datasearch.raihan-zidan2709.workers.dev/images/${results.Image.replace("/i/", "")}` : "",
       source: results.AbstractSource || "",
       snippet: results.Abstract || "",
-      abstract_url: results.AbstractURL || "",
+      url: results.AbstractURL || "",
       infobox: results.Infobox ? results.Infobox.content : [],
     };
-
-    if (filteredData.infobox.some(item => item.label === "Capital")) {
-      filteredData.type = "country";
-    }
 
     return new Response(JSON.stringify(filteredData), {
       headers: {
@@ -68,20 +64,19 @@ async function fetchDuckDuckGoData(url) {
       },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Gagal mengambil data dari DuckDuckGo" }), {
+    return new Response(JSON.stringify({ error: "Terjadi kesalahan" }), {
       headers: { "Content-Type": "application/json" },
       status: 500,
     });
   }
 }
 
-// Fungsi untuk proxy gambar dari DuckDuckGo
 async function proxyGambar(request) {
   const url = new URL(request.url);
-  const imagePath = url.pathname.replace("/images/", ""); // Ambil nama gambar
+  const imagePath = url.pathname.replace("/images/", "");
 
   if (!imagePath) {
-    return new Response(null, { status: 204 }); // Tidak ada gambar, kosongkan respons
+    return new Response(null, { status: 204 });
   }
 
   const imageUrl = `https://duckduckgo.com/i/${imagePath}`;
@@ -92,7 +87,7 @@ async function proxyGambar(request) {
     });
 
     if (!response.ok) {
-      return new Response(null, { status: 204 }); // Jika gagal, kosongkan respons
+      return new Response(null, { status: 204 });
     }
 
     return new Response(response.body, {
@@ -103,6 +98,6 @@ async function proxyGambar(request) {
       },
     });
   } catch (error) {
-    return new Response(null, { status: 204 }); // Error? Kosongkan respons
+    return new Response(null, { status: 204 });
   }
 }
