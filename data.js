@@ -50,6 +50,7 @@ async function fetchDuckDuckGoData(url) {
       type: results.Infobox?.content?.some(item => item.label === "Capital") ? "country" : "",
       image: results.Image ? `https://datasearch.raihan-zidan2709.workers.dev/images/${results.Image.replace("/i/", "")}` : "",
       source: results.AbstractSource || "",
+      sourceUrl: results.AbstractURL || "",
       snippet: results.Abstract || "",
       url: results.AbstractURL || "",
       infobox: results.Infobox ? results.Infobox.content : [],
