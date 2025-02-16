@@ -33,12 +33,22 @@ async function fetchDuckDuckGoData(url) {
     const response = await fetch(duckduckgoURL);
     let results = await response.json();
 
+    // 🔥 Filter data agar lebih ringan
+    let filteredData = {
+      title: results.Heading || "",
+      image: results.Image ? `https://datasearch.raihan-zidan2709.workers.dev/images${results.Image}` : "",
+      source: results.AbstractSource || "",
+      snippet: results.Abstract || "",
+      abstractURL: results.AbstractURL || "",
+      infobox: results.Infobox ? results.Infobox.content : []
+    };
+
     // 🔥 Cek apakah ada "Capital" di dalam Infobox
-    if (results.Infobox?.content?.some(item => item.label === "Capital")) {
-      results.type = "country"; // Tambahkan type: country
+    if (filteredData.Infobox.some(item => item.label === "Capital")) {
+      filteredData.type = "country"; // Tambahkan type: country
     }
 
-    return new Response(JSON.stringify(results), {
+    return new Response(JSON.stringify(filteredData), {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
