@@ -3,7 +3,7 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    if (path.startsWith("/gambar/")) {
+    if (path.startsWith("/images/")) {
       return await proxyGambar(request);
     } else {
       return await fetchDuckDuckGoData(url);
@@ -22,7 +22,6 @@ async function fetchDuckDuckGoData(url) {
     });
   }
 
-  // Generate random string untuk parameter tambahan
   function generateRandomString(length) {
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
@@ -37,13 +36,13 @@ async function fetchDuckDuckGoData(url) {
     return new Response(JSON.stringify(results), {
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*", // CORS Fix
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
       },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Kosong" }), {
+    return new Response(JSON.stringify({ error: "Gagal mengambil data dari DuckDuckGo" }), {
       headers: { "Content-Type": "application/json" },
       status: 500,
     });
@@ -53,17 +52,18 @@ async function fetchDuckDuckGoData(url) {
 // Fungsi untuk proxy gambar dari DuckDuckGo
 async function proxyGambar(request) {
   const url = new URL(request.url);
-  const imagePath = url.pathname.replace("/gambar/", ""); // Ambil path gambar
+  const imagePath = url.pathname.replace("/images/", ""); // Ambil nama gambar
 
   if (!imagePath) {
     return new Response(null, { status: 204 }); // Tidak ada gambar, kosongkan respons
   }
 
-  const imageUrl = `https://duckduckgo.com/${imagePath}`;
+  // Tambahkan "/i/" sebelum nama file gambar
+  const imageUrl = `https://duckduckgo.com/i/${imagePath}`;
 
   try {
     const response = await fetch(imageUrl, {
-      headers: { "User-Agent": "Mozilla/5.0" }, // Hindari pemblokiran
+      headers: { "User-Agent": "Mozilla/5.0" },
     });
 
     if (!response.ok) {
@@ -73,8 +73,8 @@ async function proxyGambar(request) {
     return new Response(response.body, {
       headers: {
         "Content-Type": response.headers.get("Content-Type"),
-        "Cache-Control": "public, max-age=86400", // Cache 1 hari
-        "Access-Control-Allow-Origin": "*", // Fix CORS
+        "Cache-Control": "public, max-age=86400",
+        "Access-Control-Allow-Origin": "*",
       },
     });
   } catch (error) {
