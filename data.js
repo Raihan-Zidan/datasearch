@@ -5,6 +5,8 @@ export default {
 
     if (path.startsWith("/images/")) {
       return await proxyGambar(request);
+    } else if (path.startsWith("/suggest")) {
+      return await fetchEcosiaSuggestions(url);
     } else {
       return await fetchDuckDuckGoData(url);
     }
@@ -100,5 +102,49 @@ async function proxyGambar(request) {
     });
   } catch (error) {
     return new Response(null, { status: 204 });
+  }
+}
+
+//  suggest  //
+
+async function fetchEcosiaSuggestions(url) {
+  const query = url.searchParams.get("q");
+  if (!query) {
+    return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
+      headers: { "Content-Type": "application/json" },
+      status: 400,
+    });
+  }
+
+  const ecosiaURL = `https://ac.ecosia.org/autocomplete?q=${encodeURIComponent(query)}`;
+
+  try {
+    const response = await fetch(ecosiaURL, {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
+        headers: { "Content-Type": "application/json" },
+        status: response.status,
+      });
+    }
+
+    const suggestions = await response.json();
+
+    return new Response(JSON.stringify(suggestions), {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
+      headers: { "Content-Type": "application/json" },
+      status: 500,
+    });
   }
 }
