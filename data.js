@@ -157,9 +157,7 @@ async function fetchFavicon(url) {
 
   try {
     const response = await fetch(faviconUrl);
-    if (!response.ok) {
-      return new Response(null, { status: 204 });
-    }
+   
     return new Response(response.body, {
       headers: {
         "Content-Type": "image/png",
@@ -167,7 +165,5 @@ async function fetchFavicon(url) {
         "Access-Control-Allow-Origin": "*",
       },
     });
-  } catch (error) {
-    return new Response(null, { status: 204 });
   }
 }
