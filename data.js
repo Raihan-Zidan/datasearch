@@ -2,7 +2,6 @@ export default {
   async fetch(request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q");
-    const proxy = searchParams.get("proxy") === "true"; // Jika ?proxy=true, konversi gambar ke base64
 
     if (!query) {
       return new Response(JSON.stringify({ error: "Query is required" }), { status: 400 });
@@ -16,36 +15,37 @@ export default {
 
     const html = await response.text();
 
-    // Ambil judul halaman
-    const titleMatch = html.match(/<title>(.*?)<\/title>/);
-    const title = titleMatch ? titleMatch[1] : "No Title";
+    // Regex untuk mengambil URL gambar, judul, dan deskripsi
+    const imageMatches = [...html.matchAll(/<img[^>]+src="(https:\/\/[^"]+\.(jpg|jpeg|png|gif))"[^>]+alt="([^"]*)"[^>]*>/g)];
 
-    // Ambil deskripsi meta
-    const descMatch = html.match(/<meta name="description" content="(.*?)"/);
-    const description = descMatch ? descMatch[1] : "No Description";
+    // Ambil data gambar dari hasil regex
+    let images = imageMatches.map(match => ({
+      url: match[1],         // URL asli gambar
+      title: match[2] || "No Title",  // Ambil alt sebagai judul, jika kosong berikan "No Title"
+      description: match[2] || "No Description" // Pakai alt sebagai deskripsi juga
+    }));
 
-    // Ambil URL gambar dari hasil pencarian Brave
-    const imageMatches = [...html.matchAll(/"https:\/\/[^"]+\.(jpg|jpeg|png|gif)"/g)];
-    let images = imageMatches.map(match => match[0].replace(/"/g, ""));
+    // Konversi semua gambar ke base64
+    const proxiedImages = await Promise.all(
+      images.map(async (img) => {
+        try {
+          const imgRes = await fetch(img.url);
+          const imgBuffer = await imgRes.arrayBuffer();
+          const base64Img = Buffer.from(imgBuffer).toString("base64");
+          return {
+            ...img,
+            base64: `data:${imgRes.headers.get("content-type")};base64,${base64Img}`
+          };
+        } catch (err) {
+          return null; // Jika gagal fetch gambar, return null
+        }
+      })
+    );
 
-    // Jika proxy gambar diaktifkan, konversi gambar ke base64
-    if (proxy) {
-      const proxiedImages = await Promise.all(
-        images.map(async (imgUrl) => {
-          try {
-            const imgRes = await fetch(imgUrl);
-            const imgBuffer = await imgRes.arrayBuffer();
-            const base64Img = Buffer.from(imgBuffer).toString("base64");
-            return `data:${imgRes.headers.get("content-type")};base64,${base64Img}`;
-          } catch (err) {
-            return null; // Jika gagal fetch gambar, return null
-          }
-        })
-      );
-      images = proxiedImages.filter(Boolean); // Hapus yang null
-    }
+    // Hapus data yang gagal
+    images = proxiedImages.filter(Boolean);
 
-    return new Response(JSON.stringify({ title, description, images }), {
+    return new Response(JSON.stringify({ images }), {
       headers: { "Content-Type": "application/json" }
     });
   }
