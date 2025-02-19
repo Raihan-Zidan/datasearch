@@ -25,12 +25,12 @@ export default {
       const pageRegex = /"(https?:\/\/[^"<>]+)"/gi;
       const pages = [...html.matchAll(pageRegex)].map((match) => match[1]);
 
-      // Regex untuk menangkap judul gambar
-      const titleRegex = /<div class=".*?">([^<]+)<\/div>/gi;
+      // Regex untuk menangkap judul gambar yang lebih akurat
+      const titleRegex = /<a[^>]+><div[^>]+><div[^>]+><img[^>]+alt="([^"]+)"/gi;
       const titles = [...html.matchAll(titleRegex)].map((match) => match[1]);
 
-      // Regex untuk menangkap sumber website
-      const sourceRegex = /<span class="rQMQod Xb5VRe">([^<]+)<\/span>/gi;
+      // Regex yang lebih akurat untuk menangkap sumber website
+      const sourceRegex = /<div class="[^"]*?i0PV5b[^"]*?">([^<]+)<\/div>/gi;
       const sources = [...html.matchAll(sourceRegex)].map((match) => match[1]);
 
       // Menyiapkan hasil dalam format JSON
