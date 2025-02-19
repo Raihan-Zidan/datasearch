@@ -1,10 +1,14 @@
 export default {
   async fetch(request) {
     try {
+      // Ambil query dari URL, default "chickens" jika tidak ada
       const { searchParams } = new URL(request.url);
-      const query = searchParams.get("q") || "chickens"; // Default query: chickens
+      const query = searchParams.get("q") || "chickens";
+
+      // Buat URL Google Images
       const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`;
 
+      // Fetch halaman Google Images dengan header yang benar
       const response = await fetch(googleUrl, {
         headers: {
           "User-Agent":
@@ -13,29 +17,28 @@ export default {
         },
       });
 
+      // Ambil HTML dari response
       const html = await response.text();
 
-      // Gunakan regex untuk menangkap JSON yang berisi data gambar
+      // Gunakan regex untuk menangkap data gambar dari script Google
       const match = html.match(/AF_initDataCallback\((.*?)\);<\/script>/s);
       if (!match) {
-        throw new Error("Data gambar tidak ditemukan. Google mungkin mengubah struktur.");
+        throw new Error("Gagal menemukan data gambar. Google mungkin mengubah format.");
       }
 
-      // Ambil JSON dari regex
+      // Parse JSON dari data yang ditemukan
       const jsonData = JSON.parse(match[1].replace(/^[^{]+/, "").replace(/;$/, ""));
 
-      // Menemukan bagian yang berisi data gambar
+      // Ambil bagian yang berisi data gambar
       const imagesData = jsonData?.data?.[31]?.[0]?.[12]?.[2] || [];
 
-      // Parse gambar
-      const results = imagesData.slice(0, 10).map((item) => {
-        return {
-          image_url: item?.[1]?.[3]?.[0]?.[0] || null,
-          title: item?.[1]?.[9]?.[2003]?.[3]?.[0] || "No title",
-          source: item?.[1]?.[9]?.[2003]?.[2] || "Unknown",
-          page_url: item?.[1]?.[9]?.[2003]?.[0] || "No link",
-        };
-      });
+      // Ubah data menjadi format JSON yang bersih
+      const results = imagesData.slice(0, 10).map((item) => ({
+        image_url: item?.[1]?.[3]?.[0]?.[0] || null,
+        title: item?.[1]?.[9]?.[2003]?.[3]?.[0] || "No title",
+        source: item?.[1]?.[9]?.[2003]?.[2] || "Unknown",
+        page_url: item?.[1]?.[9]?.[2003]?.[0] || "No link",
+      }));
 
       return new Response(JSON.stringify(results, null, 2), {
         headers: { "Content-Type": "application/json" },
