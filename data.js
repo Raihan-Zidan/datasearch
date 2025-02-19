@@ -17,24 +17,20 @@ export default {
 
       const html = await response.text();
 
-      // Menggunakan regex untuk menangkap URL gambar
-      const imageRegex = /"https:\/\/[^"]*\.gstatic\.com[^"]*"/g;
-      const images = [...html.matchAll(imageRegex)].map((match) =>
-        match[0].replace(/"/g, "")
-      );
+      // Regex untuk menangkap URL gambar dari berbagai sumber
+      const imageRegex = /"(https?:\\/\\/[^"<>]+\.(?:jpg|jpeg|png|gif|bmp|webp))"/gi;
+      const images = [...html.matchAll(imageRegex)].map((match) => match[1]);
 
-      // Menggunakan regex untuk menangkap link halaman sumber
-      const pageRegex = /"https?:\/\/[^"]*"/g;
-      const pages = [...html.matchAll(pageRegex)].map((match) =>
-        match[0].replace(/"/g, "")
-      );
+      // Regex untuk menangkap link halaman sumber
+      const pageRegex = /"(https?:\\/\\/[^"<>]+)"/gi;
+      const pages = [...html.matchAll(pageRegex)].map((match) => match[1]);
 
-      // Menggunakan regex untuk menangkap judul gambar
-      const titleRegex = /<div class=".*?">([^<]+)<\/div>/g;
+      // Regex untuk menangkap judul gambar
+      const titleRegex = /<div class=".*?">([^<]+)<\/div>/gi;
       const titles = [...html.matchAll(titleRegex)].map((match) => match[1]);
 
-      // Menggunakan regex untuk menangkap sumber website
-      const sourceRegex = /<span class="rQMQod Xb5VRe">([^<]+)<\/span>/g;
+      // Regex untuk menangkap sumber website
+      const sourceRegex = /<span class="rQMQod Xb5VRe">([^<]+)<\/span>/gi;
       const sources = [...html.matchAll(sourceRegex)].map((match) => match[1]);
 
       // Menyiapkan hasil dalam format JSON
@@ -56,4 +52,3 @@ export default {
     }
   },
 };
-
