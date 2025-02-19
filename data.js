@@ -18,11 +18,11 @@ export default {
       const html = await response.text();
 
       // Regex untuk menangkap URL gambar dari berbagai sumber
-      const imageRegex = /"(https?:\\/\\/[^"<>]+\.(?:jpg|jpeg|png|gif|bmp|webp))"/gi;
+      const imageRegex = /"(https?:\/\/[^"<>]+\.(?:jpg|jpeg|png|gif|bmp|webp))"/gi;
       const images = [...html.matchAll(imageRegex)].map((match) => match[1]);
 
       // Regex untuk menangkap link halaman sumber
-      const pageRegex = /"(https?:\\/\\/[^"<>]+)"/gi;
+      const pageRegex = /"(https?:\/\/[^"<>]+)"/gi;
       const pages = [...html.matchAll(pageRegex)].map((match) => match[1]);
 
       // Regex untuk menangkap judul gambar
