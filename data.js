@@ -153,7 +153,7 @@ async function fetchFavicon(url) {
     return new Response(null, { status: 400 });
   }
 
-  const faviconUrl = `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encodeURIComponent(siteUrl)}&size=64`;
+  const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(siteUrl)}`;
 
   try {
     const response = await fetch(faviconUrl);
@@ -162,7 +162,7 @@ async function fetchFavicon(url) {
     }
     return new Response(response.body, {
       headers: {
-        "Content-Type": response.headers.get("Content-Type"),
+        "Content-Type": "image/png",
         "Cache-Control": "public, max-age=86400",
         "Access-Control-Allow-Origin": "*",
       },
