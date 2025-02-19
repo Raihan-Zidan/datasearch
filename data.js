@@ -1,15 +1,13 @@
 export default {
   async fetch(request) {
     try {
-      // Ambil query dari URL, default "chickens" jika tidak ada
       const { searchParams } = new URL(request.url);
-      const query = searchParams.get("q") || "chickens";
+      const query = searchParams.get("q");
+      const url = `https://www.google.com/search?q=${encodeURIComponent(
+        query
+      )}&tbm=isch`;
 
-      // Buat URL Google Images
-      const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`;
-
-      // Fetch halaman Google Images dengan header yang benar
-      const response = await fetch(googleUrl, {
+      const response = await fetch(url, {
         headers: {
           "User-Agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -17,27 +15,34 @@ export default {
         },
       });
 
-      // Ambil HTML dari response
       const html = await response.text();
 
-      // Gunakan regex untuk menangkap data gambar dari script Google
-      const match = html.match(/AF_initDataCallback\((.*?)\);<\/script>/s);
-      if (!match) {
-        throw new Error("Gagal menemukan data gambar. Google mungkin mengubah format.");
-      }
+      // Menggunakan regex untuk menangkap URL gambar
+      const imageRegex = /"https:\/\/[^"]*\.gstatic\.com[^"]*"/g;
+      const images = [...html.matchAll(imageRegex)].map((match) =>
+        match[0].replace(/"/g, "")
+      );
 
-      // Parse JSON dari data yang ditemukan
-      const jsonData = JSON.parse(match[1].replace(/^[^{]+/, "").replace(/;$/, ""));
+      // Menggunakan regex untuk menangkap link halaman sumber
+      const pageRegex = /"https?:\/\/[^"]*"/g;
+      const pages = [...html.matchAll(pageRegex)].map((match) =>
+        match[0].replace(/"/g, "")
+      );
 
-      // Ambil bagian yang berisi data gambar
-      const imagesData = jsonData?.data?.[31]?.[0]?.[12]?.[2] || [];
+      // Menggunakan regex untuk menangkap judul gambar
+      const titleRegex = /<div class=".*?">([^<]+)<\/div>/g;
+      const titles = [...html.matchAll(titleRegex)].map((match) => match[1]);
 
-      // Ubah data menjadi format JSON yang bersih
-      const results = imagesData.slice(0, 10).map((item) => ({
-        image_url: item?.[1]?.[3]?.[0]?.[0] || null,
-        title: item?.[1]?.[9]?.[2003]?.[3]?.[0] || "No title",
-        source: item?.[1]?.[9]?.[2003]?.[2] || "Unknown",
-        page_url: item?.[1]?.[9]?.[2003]?.[0] || "No link",
+      // Menggunakan regex untuk menangkap sumber website
+      const sourceRegex = /<span class="rQMQod Xb5VRe">([^<]+)<\/span>/g;
+      const sources = [...html.matchAll(sourceRegex)].map((match) => match[1]);
+
+      // Menyiapkan hasil dalam format JSON
+      const results = images.slice(0, 10).map((img, index) => ({
+        image_url: img,
+        title: titles[index] || "No title",
+        source: sources[index] || "Unknown",
+        page_url: pages[index] || "No link",
       }));
 
       return new Response(JSON.stringify(results, null, 2), {
@@ -51,3 +56,4 @@ export default {
     }
   },
 };
+
