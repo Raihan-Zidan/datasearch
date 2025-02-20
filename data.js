@@ -7,8 +7,6 @@ export default {
       return await proxyGambar(request);
     } else if (path.startsWith("/suggest")) {
       return await fetchEcosiaSuggestions(url);
-    } else if (path.startsWith("/favicon")) {
-      return await fetchFavicon(url);
     } else {
       return await fetchDuckDuckGoData(url);
     }
@@ -35,7 +33,7 @@ async function fetchDuckDuckGoData(url) {
   try {
     const response = await fetch(duckduckgoURL, {
       headers: {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         "Accept": "application/json",
       },
     });
@@ -64,6 +62,8 @@ async function fetchDuckDuckGoData(url) {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
       },
     });
   } catch (error) {
@@ -105,6 +105,8 @@ async function proxyGambar(request) {
   }
 }
 
+//  suggest  //
+
 async function fetchEcosiaSuggestions(url) {
   const query = url.searchParams.get("q");
   if (!query) {
@@ -124,13 +126,6 @@ async function fetchEcosiaSuggestions(url) {
       },
     });
 
-    if (!response.ok) {
-      return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
-        headers: { "Content-Type": "application/json" },
-        status: response.status,
-      });
-    }
-
     const suggestions = await response.json();
 
     return new Response(JSON.stringify(suggestions), {
@@ -143,27 +138,6 @@ async function fetchEcosiaSuggestions(url) {
     return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
       headers: { "Content-Type": "application/json" },
       status: 500,
-    });
-  }
-}
-
-async function fetchFavicon(url) {
-  const siteUrl = url.searchParams.get("url");
-  if (!siteUrl) {
-    return new Response(null, { status: 400 });
-  }
-
-  const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(siteUrl)}`;
-
-  try {
-    const response = await fetch(faviconUrl);
-   
-    return new Response(response.body, {
-      headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=86400",
-        "Access-Control-Allow-Origin": "*",
-      }
     });
   }
 }
