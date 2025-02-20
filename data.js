@@ -7,6 +7,8 @@ export default {
       return await proxyGambar(request);
     } else if (path.startsWith("/suggest")) {
       return await fetchEcosiaSuggestions(url);
+    } else if (path.startsWith("/favicon")) {
+      return await fetchGoogleFavicon(url);
     } else {
       return await fetchDuckDuckGoData(url);
     }
@@ -141,3 +143,36 @@ async function fetchEcosiaSuggestions(url) {
     });
   }
 }
+
+async function fetchGoogleFavicon(url) {
+  const site = url.searchParams.get("url");
+  if (!site) {
+    return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
+      headers: { "Content-Type": "application/json" },
+      status: 400,
+    });
+  }
+
+  const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(site)}`;
+
+  try {
+    const response = await fetch(faviconUrl, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+
+    if (!response.ok) {
+      return new Response(null, { status: 204 });
+    }
+
+    return new Response(response.body, {
+      headers: {
+        "Content-Type": response.headers.get("Content-Type"),
+        "Cache-Control": "public, max-age=86400",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  } catch (error) {
+    return new Response(null, { status: 204 });
+  }
+}
+
