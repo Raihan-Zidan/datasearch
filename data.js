@@ -112,7 +112,7 @@ async function proxyGambar(request) {
 async function fetchEcosiaSuggestions(url) {
   const query = url.searchParams.get("q");
   if (!query) {
-    return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
+    return new Response(JSON.stringify([]), {
       headers: { "Content-Type": "application/json" },
       status: 400,
     });
@@ -137,12 +137,17 @@ async function fetchEcosiaSuggestions(url) {
       },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
+    return new Response(JSON.stringify([]), {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      status: 200, // Tetap mengembalikan status 200 agar tidak dianggap error
     });
   }
 }
+
+//  favicon  //
 
 async function fetchGoogleFavicon(url) {
   const site = url.searchParams.get("url");
