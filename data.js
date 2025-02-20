@@ -162,8 +162,8 @@ async function fetchFavicon(url) {
       headers: {
         "Content-Type": "image/png",
         "Cache-Control": "public, max-age=86400",
-        "Access-Control-Allow-Origin": "*",
-      },
+        "Access-Control-Allow-Orig
+      }
     });
   }
 }
