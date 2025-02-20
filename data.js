@@ -154,14 +154,13 @@ async function fetchGoogleFavicon(url) {
   }
 
   const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(site)}`;
+  const defaultFavicon = "https://datasearch.raihan-zidan2709.workers.dev/images/favicon-default.png"; // Gunakan favicon default dari Workers Anda
 
   try {
-    const response = await fetch(faviconUrl, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-    });
+    const response = await fetch(faviconUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
 
-    if (!response.ok) {
-      return new Response(null, { status: 204 });
+    if (!response.ok || response.headers.get("Content-Length") === "0") {
+      return await fetch(defaultFavicon);
     }
 
     return new Response(response.body, {
@@ -172,7 +171,7 @@ async function fetchGoogleFavicon(url) {
       },
     });
   } catch (error) {
-    return new Response(null, { status: 204 });
+    return await fetch(defaultFavicon);
   }
 }
 
