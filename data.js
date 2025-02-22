@@ -166,6 +166,7 @@ async function fetchGoogleFavicon(url) {
       headers: { "Content-Type": "application/json" },
       status: 400,
     });
+    console.log("error oi");
   }
 
   const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(site)}`;
@@ -205,6 +206,7 @@ async function fetchGoogleFavicon(url) {
         "Access-Control-Allow-Origin": "*",
       },
     });
+    console.log("error oi");
   }
 }
 
