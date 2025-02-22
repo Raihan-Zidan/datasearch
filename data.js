@@ -211,8 +211,7 @@ async function fetchGoogleSearchData(url) {
     const tbm = url.searchParams.get("tbm");
     const maxResults = url.searchParams.get("maxResults");
     const sort = url.searchParams.get("sort");
-    const page = parseInt(url.searchParams.get("page")) || 0;
-    const startIndex = page * 10 + 1;
+    const startIndex = url.searchParams.get("page");
     const gl = url.searchParams.get("gl");
     const hl = url.searchParams.get("hl");
 
