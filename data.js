@@ -211,7 +211,7 @@ async function fetchGoogleSearchData(url) {
     const tbm = url.searchParams.get("tbm");
     const maxResults = url.searchParams.get("maxResults");
     const sort = url.searchParams.get("sort");
-    const startIndex = url.searchParams.get("page") || "";
+    const startIndex = url.searchParams.get("page") || "1";
     const gl = url.searchParams.get("gl");
     const hl = url.searchParams.get("hl");
 
@@ -262,7 +262,7 @@ async function fetchGoogleSearchData(url) {
     } else {
       const googleAPIKey = apikey[Math.floor(Math.random() * apikey.length)];
       const googleCX = tbm === "nws" ? "f7113f6d71c8f48c8" : "435bdb05f0b5e47bb";
-      googleSearchURL = `https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${googleCX}&q=${encodeURIComponent(query)}}`;
+      googleSearchURL = `https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${googleCX}&q=${encodeURIComponent(query)}&start=${startIndex}`;
       
       if (gl) googleSearchURL += `&gl=${gl}`;
       if (hl) googleSearchURL += `&hl=${hl}`;
