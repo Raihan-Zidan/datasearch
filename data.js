@@ -216,6 +216,8 @@ async function fetchGoogleSearchData(url) {
   try {
     const query = url.searchParams.get("q");
     const tbm = url.searchParams.get("tbm");
+    const maxResults = url.searchParams.get("maxResults");
+    const sort = url.searchParams.get("sort");
     const page = parseInt(url.searchParams.get("page")) || 0;
     const startIndex = page * 10 + 1;
     const gl = url.searchParams.get("gl");
@@ -256,10 +258,15 @@ async function fetchGoogleSearchData(url) {
       "AIzaSyA8uJOYnA1ohf_7qIKJ15Evpyldq3CVl9M",
       "AIzaSyDgDhEyznphPnYHWQzIqiVJfkgwrxo2-2A"
     ];
+    const ytapikey = [
+      "AIzaSyDl_e_6hP6mKPXmzXbahlduZG3ErglkHSY",
+      "AIzaSyAqc7T67GDJ208Y8CvR8YaPrNZlzKa2XbE"
+    ];
 
     let googleSearchURL;
     if (tbm === "vid") {
-      googleSearchURL = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query)}&type=video&key=AIzaSyAqc7T67GDJ208Y8CvR8YaPrNZlzKa2XbE`;
+      googleSearchURL = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query)}&type=video&key=${ytapikey[Math.floor(Math.random() * apikey.length)]}`;
+      if (maxResults) googleSearchURL += `&maxResults=${maxResults}`;
     } else {
       const googleAPIKey = apikey[Math.floor(Math.random() * apikey.length)];
       const googleCX = tbm === "nws" ? "f7113f6d71c8f48c8" : "435bdb05f0b5e47bb";
@@ -267,6 +274,7 @@ async function fetchGoogleSearchData(url) {
       
       if (gl) googleSearchURL += `&gl=${gl}`;
       if (hl) googleSearchURL += `&hl=${hl}`;
+      if (sort) googleSearchURL += `&sort=${sort}`;
     }
 
     const response = await fetch(googleSearchURL, { headers: { "User-Agent": "Mozilla/5.0" } });
