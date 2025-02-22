@@ -9,6 +9,8 @@ export default {
       return await fetchEcosiaSuggestions(url);
     } else if (path.startsWith("/favicon")) {
       return await fetchGoogleFavicon(url);
+    } else if (path.startsWith("/api")) {
+      return await fetchGoogleSearchData(url);
     } else {
       return await fetchDuckDuckGoData(url);
     }
@@ -198,4 +200,94 @@ async function fetchGoogleFavicon(url) {
   }
 }
 
+// search api //
 
+async function fetchGoogleSearchData(url) {
+  const query = url.searchParams.get("q");
+  const tbm = url.searchParams.get("tbm");
+  const page = parseInt(url.searchParams.get("page")) || 0;
+  const startIndex = page * 10 + 1;
+  const gl = url.searchParams.get("gl");
+  const hl = url.searchParams.get("hl");
+  if (!query) {
+    return new Response(JSON.stringify({ error: "Parameter q diperlukan." }), {
+      headers: { "Content-Type": "application/json" },
+      status: 400,
+    });
+  }
+
+  apikey = [
+  "AIzaSyCJ3RgcZOxOm_V1hq-UXCJwPsWquHggQrg",
+  "AIzaSyDuBTV5q0NAgfSY-2X9h5-ggbrX-a3EJBU",
+  "AIzaSyB7eZUGjFCrSPEEI9OlDmtRW5fRTQIKIus",
+  "AIzaSyC1etlk90G0YK1pNmblThRrIpYXWVCe8no",
+  "AIzaSyAeibL6090vetveJ2IxkZ0h8JpmCUAEFAU",
+  "AIzaSyBOETA8ym9-I5zMAq7IoEhQ1p4PajPvzHk",
+  "AIzaSyBeCeoUn9efByemCErnTfNOW85H6WhUU8Q",
+  "AIzaSyDJAlDofWRoODKtvr4gtDkHYNAHPZzSVX0",
+  "AIzaSyDYZQDK3--oAlN9P80kFbr5Ae81Xv4r4Ew",
+  "AIzaSyDBficXMaK97bS7ys4mAGvz5tLwwBSKbbg",
+  "AIzaSyBK7tP0QHWR0x4YUd71sN298A4raMfLqKY",
+  "AIzaSyD4KHQg1v9wFVlaKEVVVlZpiq8Y8L4UouI",
+  "AIzaSyBj7aEZNIwRQG2cjuHZyPfW1UNywqsMcNo",
+  "AIzaSyCmS3naxRClDgCH_ugTbn6dSqtArX0xj2o",
+  "AIzaSyBtnDuoWCx30xG2gmUgRdB_pqGUzdr7s-A",
+  "AIzaSyD69KZdQRASdg0QxpOA74adD4HeFRgHwx8",
+  "AIzaSyDKPUq-VyTWsEA6PTozWnMEwNes3fu3CSY",
+  "AIzaSyA-ZFRhlpU4PBS10Kp5Ipp6UD4xK--M-j8",
+  "AIzaSyBni04n3gqNYKqAvtzNSWhau9LOoNzRFj4",
+  "AIzaSyAB3o1QppoePI655jiTC3ArSBfQs_SuGyw",
+  "AIzaSyAIyON_dQEybmn0HVilGHnPG2Hz0kheatk",
+  "AIzaSyBIWWb7muhPm7yo4QPq1vcqi4XWaNtIJOY",
+  "AIzaSyBm9AN4slsELMKW8fL401ZNC6ahIzWHjuc",
+  "AIzaSyA8uJOYnA1ohf_7qIKJ15Evpyldq3CVl9M",
+  "AIzaSyDgDhEyznphPnYHWQzIqiVJfkgwrxo2-2A"
+  ];
+
+  let googleSearchURL;
+
+  if (tbm === "vid") {
+    googleSearchURL = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=100&q=${encodeURIComponent(query)}&type=video&key=AIzaSyAqc7T67GDJ208Y8CvR8YaPrNZlzKa2XbE`;
+  } else {
+    const googleAPIKey = apikey[Math.floor(Math.random() * apikey.length)];
+    const googleCX = tbm === "nws" ? "f7113f6d71c8f48c8" : "435bdb05f0b5e47bb";
+    googleSearchURL = `https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${googleCX}&q=${encodeURIComponent(query)}&start=${startIndex}`;
+    
+    if (gl) googleSearchURL += `&gl=${gl}`;
+    if (hl) googleSearchURL += `&hl=${hl}`;
+  }
+  
+  try {
+    const response = await fetch(googleSearchURL, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+
+    if (!response.ok) {
+      return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
+        headers: { "Content-Type": "application/json" },
+        status: response.status,
+      });
+    }
+
+    const data = await response.json();
+    
+    // Filter out unnecessary data
+    const filteredData = data.items ? data.items.map(item => ({
+      title: item.title,
+      link: item.link,
+      snippet: item.snippet,
+    })) : [];
+
+    return new Response(JSON.stringify(filteredData), {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
+      headers: { "Content-Type": "application/json" },
+      status: 500,
+    });
+  }
+}
