@@ -212,15 +212,15 @@ async function fetchGoogleSearchData(url) {
     const hl = url.searchParams.get("hl");
 
     if (!query) {
-      console.error("⚠️ Error: Parameter 'q' tidak ditemukan!");
+      console.error("Error: Parameter 'q' tidak ditemukan!");
       return new Response(JSON.stringify({ error: "Parameter q diperlukan." }), {
         headers: { "Content-Type": "application/json" },
         status: 400,
       });
     }
 
-    console.log(`🔍 Query: ${query}`);
-    console.log(`🔄 TBM: ${tbm}, Page: ${page}, StartIndex: ${startIndex}, GL: ${gl}, HL: ${hl}`);
+    console.log(`Query: ${query}`);
+    console.log(`TBM: ${tbm}, Page: ${page}, StartIndex: ${startIndex}, GL: ${gl}, HL: ${hl}`);
 
     const apikey = [
       "AIzaSyCJ3RgcZOxOm_V1hq-UXCJwPsWquHggQrg",
