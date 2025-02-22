@@ -258,12 +258,13 @@ async function fetchGoogleSearchData(url) {
 
     let googleSearchURL;
     if (tbm === "vid") {
-      googleSearchURL = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query)}&type=video&key=${ytapikey[Math.floor(Math.random() * apikey.length)]}`;
+      const YtAPIKey = ytapikey[Math.floor(Math.random() * ytapikey.length)];
+      googleSearchURL = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query)}&type=video&key=${YtAPIKey}`;
       if (maxResults) googleSearchURL += `&maxResults=${maxResults}`;
     } else {
       const googleAPIKey = apikey[Math.floor(Math.random() * apikey.length)];
       const googleCX = tbm === "nws" ? "f7113f6d71c8f48c8" : "435bdb05f0b5e47bb";
-      googleSearchURL = `https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${googleCX}&q=${encodeURIComponent(query)}&start=${startIndex}`;
+      googleSearchURL = `https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${googleCX}&q=${encodeURIComponent(query)}&start=${page}`;
       
       if (gl) googleSearchURL += `&gl=${gl}`;
       if (hl) googleSearchURL += `&hl=${hl}`;
