@@ -3,13 +3,6 @@ export default {
     const allowedOrigin = "https://raihan-zidan.github.io";
     const origin = request.headers.get("Origin");
 
-    if (origin !== allowedOrigin) {
-      return new Response(JSON.stringify({ error: "Akses ditolak." }), {
-        headers: { "Content-Type": "application/json" },
-        status: 403,
-      });
-    }
-
     const url = new URL(request.url);
     const path = url.pathname;
 
