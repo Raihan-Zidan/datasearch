@@ -256,7 +256,7 @@ async function fetchGoogleSearchData(url) {
     if (gl) googleSearchURL += `&gl=${gl}`;
     if (hl) googleSearchURL += `&hl=${hl}`;
   }
-  
+  console.log("Fetching URL:", googleSearchURL);
   try {
     const response = await fetch(googleSearchURL, {
       headers: { "User-Agent": "Mozilla/5.0" },
