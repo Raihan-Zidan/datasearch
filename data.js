@@ -287,9 +287,8 @@ async function fetchGoogleSearchData(url) {
     }
 
     const data = await response.json();
-    const dtg = cleanResponse(data);
 
-    return new Response(JSON.stringify(dtg), {
+    return new Response(JSON.stringify(data), {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
@@ -302,18 +301,5 @@ async function fetchGoogleSearchData(url) {
       status: 500,
     });
   }
-}
-
-
-function cleanResponse(data) {
-  // Hapus properti utama yang tidak diperlukan
-  const { kind, url, queries, context, ...filteredData } = data;
-
-  // Hapus properti `kind` dalam `items`
-  if (filteredData.items) {
-    filteredData.items = filteredData.items.map(({ kind, ...item }) => item);
-  }
-
-  return filteredData;
 }
 
