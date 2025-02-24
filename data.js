@@ -285,13 +285,15 @@ async function fetchGoogleSearchData(url) {
         status: response.status,
       });
     }
+    const data = await response.json();
 
+    
     const sitelinksResponse = await fetch("https://raihan-zidan.github.io/sitelinks.js");
     const sitelinksText = await sitelinksResponse.text();
     const sitelinksData = eval(sitelinksText); // Konversi string ke objek JavaScript
 
     // Cek dan tambahkan sitelinks ke hasil pencarian
-    response.items = response.items.map(item => {
+    data.items = data.items.map(item => {
       const matchingSite = sitelinksData.find(site => item.link.startsWith(site.site));
       if (matchingSite) {
         item.sitelinks = matchingSite.links;
