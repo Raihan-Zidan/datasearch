@@ -4,6 +4,8 @@ export default {
     const query = url.searchParams.get("q");
     const start = parseInt(url.searchParams.get("start")) || 0;
 
+    console.log("Query yang diterima:", query); // Debugging: Cek query
+
     if (!query) {
       return new Response(JSON.stringify({ error: "Query parameter 'q' is required" }), {
         status: 400,
@@ -46,11 +48,18 @@ export default {
         });
       }
 
-      return new Response(JSON.stringify({ query: query, images: imageResults }), {
+      // Pastikan query masuk dalam JSON response
+      const result = { query: query, images: imageResults };
+
+      console.log("Response JSON:", result); // Debugging
+
+      return new Response(JSON.stringify(result), {
         status: 200,
         headers: getCorsHeaders(),
       });
+
     } catch (error) {
+      console.error("Error:", error); // Debugging error
       return new Response(JSON.stringify({ error: `Terjadi kesalahan. ${error.message}` }), {
         status: 500,
         headers: getCorsHeaders(),
