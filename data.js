@@ -46,7 +46,7 @@ export default {
         });
       }
 
-      return new Response(JSON.stringify({ images: imageResults }), {
+      return new Response(JSON.stringify({ query: query, images: imageResults }), {
         status: 200,
         headers: getCorsHeaders(),
       });
