@@ -1,10 +1,16 @@
 export default {
   async fetch(request) {
     const url = new URL(request.url);
+
+    // Bypass favicon.ico requests
+    if (url.pathname === "/favicon.ico") {
+      return new Response(null, { status: 204 }); // No Content
+    }
+
     const query = url.searchParams.get("q");
     const start = parseInt(url.searchParams.get("start")) || 0;
 
-    console.log("Query yang diterima:", query); // Debugging: Cek query
+    console.log("Query diterima:", query);
 
     if (!query) {
       return new Response(JSON.stringify({ error: "Query parameter 'q' is required" }), {
@@ -32,13 +38,10 @@ export default {
       }
 
       const html = await response.text();
-      const images = extractImageData(html).filter(image => 
-        !/^https?:\/\/cdn[0-9]-production-images-kly\.akamaized\.net\//.test(image.url)
-      );
+      const images = extractImageData(html);
 
       for (const image of images) {
         const resizedUrl = getCloudflareResizedUrl(image.url);
-
         imageResults.push({
           image: image.url,
           thumbnail: resizedUrl,
@@ -48,18 +51,15 @@ export default {
         });
       }
 
-      // Pastikan query masuk dalam JSON response
-      const result = { query: query, images: imageResults };
+      console.log("Response JSON:", { query, images: imageResults });
 
-      console.log("Response JSON:", result); // Debugging
-
-      return new Response(JSON.stringify(result), {
+      return new Response(JSON.stringify({ query, images: imageResults }), {
         status: 200,
         headers: getCorsHeaders(),
       });
 
     } catch (error) {
-      console.error("Error:", error); // Debugging error
+      console.error("Error:", error);
       return new Response(JSON.stringify({ error: `Terjadi kesalahan. ${error.message}` }), {
         status: 500,
         headers: getCorsHeaders(),
@@ -67,40 +67,3 @@ export default {
     }
   },
 };
-
-// Fungsi untuk mendapatkan URL gambar dari Cloudflare API
-function getCloudflareResizedUrl(imageUrl) {
-  return `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&output=webp&w=200&q=10`;
-}
-
-// Fungsi ekstraksi data gambar dari HTML hasil pencarian Google
-function extractImageData(html) {
-  const imageRegex = /"(https?:\/\/[^" ]+\.(jpg|jpeg|png|gif|webp))"/g;
-  const titleRegex = /<div class="toI8Rb OSrXXb"[^>]*>(.*?)<\/div>/g;
-  const siteNameRegex = /<div class="guK3rf cHaqb"[^>]*>.*?<span[^>]*>(.*?)<\/span>/g;
-  const pageUrlRegex = /<a class="EZAeBe"[^>]*href="(https?:\/\/[^" ]+)"/g;
-
-  const imageMatches = [...html.matchAll(imageRegex)];
-  const titleMatches = [...html.matchAll(titleRegex)];
-  const siteNameMatches = [...html.matchAll(siteNameRegex)];
-  const pageUrlMatches = [...html.matchAll(pageUrlRegex)];
-
-  return imageMatches.map((match, index) => {
-    return {
-      url: match[1],
-      title: titleMatches[index] ? titleMatches[index][1] : "",
-      siteName: siteNameMatches[index] ? siteNameMatches[index][1] : "",
-      pageUrl: pageUrlMatches[index] ? pageUrlMatches[index][1] : "",
-    };
-  }).filter(image => image.url !== "https://ssl.gstatic.com/gb/images/bar/al-icon.png");
-}
-
-// Fungsi untuk mengatur CORS
-function getCorsHeaders() {
-  return {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}
