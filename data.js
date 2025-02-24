@@ -286,14 +286,12 @@ async function fetchGoogleSearchData(url) {
       });
     }
 
-    const data = await response.json();
-
     const sitelinksResponse = await fetch("https://raihan-zidan.github.io/sitelinks.js");
     const sitelinksText = await sitelinksResponse.text();
     const sitelinksData = eval(sitelinksText); // Konversi string ke objek JavaScript
 
     // Cek dan tambahkan sitelinks ke hasil pencarian
-    data.items = data.items.map(item => {
+    response.items = response.items.map(item => {
       const matchingSite = sitelinksData.find(site => item.link.startsWith(site.site));
       if (matchingSite) {
         item.sitelinks = matchingSite.links;
@@ -301,7 +299,7 @@ async function fetchGoogleSearchData(url) {
       return item;
     });
 
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify(response), {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
