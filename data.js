@@ -2,7 +2,7 @@ export default {
   async fetch(request) {
     const url = new URL(request.url);
 
-    // Bypass favicon.ico requests
+    // Bypass request favicon.ico agar tidak error
     if (url.pathname === "/favicon.ico") {
       return new Response(null, { status: 204 }); // No Content
     }
@@ -67,3 +67,40 @@ export default {
     }
   },
 };
+
+// Fungsi untuk mendapatkan URL gambar dari Cloudflare API
+function getCloudflareResizedUrl(imageUrl) {
+  return `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&output=webp&w=200&q=10`;
+}
+
+// Fungsi ekstraksi data gambar dari HTML hasil pencarian Google
+function extractImageData(html) {
+  const imageRegex = /"(https?:\/\/[^" ]+\.(jpg|jpeg|png|gif|webp))"/g;
+  const titleRegex = /<div class="toI8Rb OSrXXb"[^>]*>(.*?)<\/div>/g;
+  const siteNameRegex = /<div class="guK3rf cHaqb"[^>]*>.*?<span[^>]*>(.*?)<\/span>/g;
+  const pageUrlRegex = /<a class="EZAeBe"[^>]*href="(https?:\/\/[^" ]+)"/g;
+
+  const imageMatches = [...html.matchAll(imageRegex)];
+  const titleMatches = [...html.matchAll(titleRegex)];
+  const siteNameMatches = [...html.matchAll(siteNameRegex)];
+  const pageUrlMatches = [...html.matchAll(pageUrlRegex)];
+
+  return imageMatches.map((match, index) => {
+    return {
+      url: match[1],
+      title: titleMatches[index] ? titleMatches[index][1] : "",
+      siteName: siteNameMatches[index] ? siteNameMatches[index][1] : "",
+      pageUrl: pageUrlMatches[index] ? pageUrlMatches[index][1] : "",
+    };
+  }).filter(image => image.url !== "https://ssl.gstatic.com/gb/images/bar/al-icon.png");
+}
+
+// Fungsi untuk mengatur CORS
+function getCorsHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
