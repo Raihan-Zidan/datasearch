@@ -287,27 +287,6 @@ async function fetchGoogleSearchData(url) {
     }
     const data = await response.json();
 
-    // Ambil dan evaluasi sitelinks dari file eksternal
-    const sitelinksResponse = await fetch("https://raihan-zidan.github.io/sitelinks.js");
-    const sitelinksText = await sitelinksResponse.text();
-    // Jalankan kode sitelinks.js, misalnya kode tersebut berisi 'var sitelinks = [ ... ];'
-    eval(sitelinksText);
-    // Setelah eval, variabel global 'sitelinks' seharusnya sudah tersedia
-    if (typeof sitelinks !== "undefined" && Array.isArray(sitelinks)) {
-      if (Array.isArray(data.items)) {
-        data.items = data.items.map(item => {
-          if (item.link) {
-            const matchingSite = sitelinks.find(site => item.link.startsWith(site.site));
-            if (matchingSite) {
-              item.sitelinks = matchingSite.links;
-            }
-          }
-          return item;
-        });
-      }
-    }
-
-    // Mengembalikan data yang telah diproses (bukan response asli)
     return new Response(JSON.stringify(data), {
       headers: {
         "Content-Type": "application/json",
