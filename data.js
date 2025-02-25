@@ -121,19 +121,22 @@ async function fetchEcosiaSuggestions(url) {
     });
   }
 
-  const ecosiaURL = `https://ac.ecosia.org/autocomplete?q=${encodeURIComponent(query)}`;
+  const ecosiaURL = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`;
 
   try {
     const response = await fetch(ecosiaURL, {
       headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          "Referer": "https://www.google.com/",
       },
     });
 
     const suggestions = await response.json();
-
-    return new Response(JSON.stringify(suggestions), {
+        const result = {
+            query: query,
+            suggestions: suggestions[1]
+        };
+    return new Response(JSON.stringify(result), {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
