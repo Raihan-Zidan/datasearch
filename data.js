@@ -1,14 +1,6 @@
 export default {
   async fetch(request) {
-const allowedOrigins = ["https://raihan-zidan.github.io"];
-const origin = request.headers.get("Origin");
 
-if (!allowedOrigins.includes(origin) && origin !== null) {
-  return new Response(JSON.stringify({ error: "Akses ditolak." }), {
-    headers: { "Content-Type": "application/json" },
-    status: 403,
-  });
-}
     const url = new URL(request.url);
     const path = url.pathname;
 
