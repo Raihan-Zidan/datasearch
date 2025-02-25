@@ -132,10 +132,24 @@ async function fetchEcosiaSuggestions(url) {
     });
 
     const suggestions = await response.json();
-        const result = {
-            query: query,
-            suggestions: suggestions[1]
-        };
+    const result = {
+        query: query,
+        suggestions: suggestions[1]
+    };
+
+    // Fungsi untuk menambahkan efek bold
+    function highlightMatches(text, suggestions) {
+        let words = text.split(/(\s+)/); // Memisahkan kata tanpa menghilangkan spasi
+        
+        let highlightedText = words.map(word => 
+            suggestions.includes(word) ? `<b>${word}</b>` : word
+        ).join('');
+
+        return highlightedText;
+    }
+
+    result.highlightedText = highlightMatches(query, result.suggestions);
+
     return new Response(JSON.stringify(result), {
       headers: {
         "Content-Type": "application/json",
@@ -152,6 +166,7 @@ async function fetchEcosiaSuggestions(url) {
     });
   }
 }
+
 
 //  favicon  //
 
