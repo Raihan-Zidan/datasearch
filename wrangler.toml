@@ -8,3 +8,6 @@ log_level = "debug"
 
 [vars]
 LOGGING = "true"
+
+[observability]
+enabled = true
