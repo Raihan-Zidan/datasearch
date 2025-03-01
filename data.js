@@ -157,7 +157,7 @@ async function fetchEcosiaSuggestions(url) {
 
 //  favicon  //
 
-async function fetchGoogleFavicon(url) {
+async function afetchGoogleFavicon(url) {
   const site = url.searchParams.get("url");
   if (!site) {
     return new Response("Parameter tidak valid.", {
@@ -200,7 +200,7 @@ async function fetchGoogleFavicon(url) {
 }
 
 
-async function afetchGoogleFavicon(url) {
+async function fetchGoogleFavicon(url) {
   const site = url.searchParams.get("url");
   if (!site) {
     return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
