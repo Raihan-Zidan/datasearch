@@ -56,7 +56,7 @@ async function fetchDuckDuckGoData(url) {
     let filteredData = {
       title: results.Heading || "",
       type: results.Infobox?.content?.some(item => item.label === "Capital") ? "country" : "",
-      image: results.Image ? `https://datasearch.raihan-zidan2709.workers.dev/images/${results.Image.replace("/i/", "")}` : "",
+      image: results.Image ? `https://datasearch.searchdata.workers.dev/images/${results.Image.replace("/i/", "")}` : "",
       source: results.AbstractSource || "",
       sourceUrl: results.AbstractURL || "",
       snippet: results.Abstract || "",
