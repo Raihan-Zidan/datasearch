@@ -157,7 +157,45 @@ async function fetchEcosiaSuggestions(url) {
 
 //  favicon  //
 
-async function fetchGoogleFavicon(url) {
+                               async function fetchGoogleFavicon(url) {
+  const site = url.searchParams.get("url");
+  if (!site) {
+    return new Response("Parameter tidak valid.", {
+      headers: { "Content-Type": "text/plain" },
+      status: 400,
+    });
+  }
+
+  const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(site)}`;
+
+  try {
+    const response = await fetch(faviconUrl, { headers: { "User-Agent": "Mozilla/5.0" } });
+
+    if (!response.ok || response.headers.get("Content-Length") === "0") {
+      return new Response("Favicon tidak ditemukan.", {
+        headers: { "Content-Type": "text/plain" },
+        status: 404,
+      });
+    }
+
+    // Mengembalikan favicon sebagai Blob langsung
+    return new Response(response.body, {
+      headers: {
+        "Content-Type": response.headers.get("Content-Type") || "image/png",
+        "Cache-Control": "public, max-age=86400",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  } catch (error) {
+    return new Response("Terjadi kesalahan saat mengambil favicon.", {
+      headers: { "Content-Type": "text/plain" },
+      status: 500,
+    });
+  }
+                               }
+
+
+async function afetchGoogleFavicon(url) {
   const site = url.searchParams.get("url");
   if (!site) {
     return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
