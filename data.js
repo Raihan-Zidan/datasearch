@@ -157,7 +157,7 @@ async function fetchEcosiaSuggestions(url) {
 
 //  favicon  //
 
-                               async function fetchGoogleFavicon(url) {
+async function fetchGoogleFavicon(url) {
   const site = url.searchParams.get("url");
   if (!site) {
     return new Response("Parameter tidak valid.", {
@@ -178,10 +178,15 @@ async function fetchEcosiaSuggestions(url) {
       });
     }
 
-    // Mengembalikan favicon sebagai Blob langsung
-    return new Response(response.body, {
+    // Mengubah gambar menjadi ArrayBuffer
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    const mimeType = response.headers.get("Content-Type") || "image/png";
+
+    // Mengembalikan Data URL langsung sebagai teks
+    return new Response(`data:${mimeType};base64,${base64}`, {
       headers: {
-        "Content-Type": response.headers.get("Content-Type") || "image/png",
+        "Content-Type": "text/plain",
         "Cache-Control": "public, max-age=86400",
         "Access-Control-Allow-Origin": "*",
       },
@@ -192,7 +197,7 @@ async function fetchEcosiaSuggestions(url) {
       status: 500,
     });
   }
-                               }
+}
 
 
 async function afetchGoogleFavicon(url) {
