@@ -262,6 +262,7 @@ async function fetchGoogleSearchData(url) {
     const startIndex = url.searchParams.get("page") || "1";
     const gl = url.searchParams.get("gl");
     const hl = url.searchParams.get("hl");
+    const lr = url.searchParams.get("lr");
 
     if (!query) {
       return new Response(JSON.stringify({ error: "Parameter q diperlukan." }), {
@@ -309,12 +310,13 @@ async function fetchGoogleSearchData(url) {
       if (maxResults) googleSearchURL += `&maxResults=${maxResults}`;
     } else {
       const googleAPIKey = apikey[Math.floor(Math.random() * apikey.length)];
-      const googleCX = tbm === "nws" ? "f7113f6d71c8f48c8&dateRestrict=d7" : "435bdb05f0b5e47bb";
+      const googleCX = tbm === "nws" ? "f7113f6d71c8f48c8&dateRestrict=d3" : "435bdb05f0b5e47bb";
       googleSearchURL = `https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${googleCX}&q=${encodeURIComponent(query)}&start=${startIndex}`;
       
       if (gl) googleSearchURL += `&gl=${gl}`;
       if (hl) googleSearchURL += `&hl=${hl}`;
       if (sort) googleSearchURL += `&sort=${sort}`;
+      if (lr) googleSearchURL += `&lr=${lr}`;
     }
 
     const response = await fetch(googleSearchURL, { headers: { "User-Agent": "Mozilla/5.0" } });
