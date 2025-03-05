@@ -263,7 +263,8 @@ async function fetchGoogleSearchData(url) {
     const gl = url.searchParams.get("gl");
     const hl = url.searchParams.get("hl");
     const lr = url.searchParams.get("lr");
-
+    const cb = url.searchParams.get("cb");
+    
     if (!query) {
       return new Response(JSON.stringify({ error: "Parameter q diperlukan." }), {
         headers: { "Content-Type": "application/json" },
@@ -317,6 +318,7 @@ async function fetchGoogleSearchData(url) {
       if (hl) googleSearchURL += `&hl=${hl}`;
       if (sort) googleSearchURL += `&sort=${sort}`;
       if (lr) googleSearchURL += `&lr=${lr}`;
+      if (cb) googleSearchURL += `&callback=${cb}`;
     }
 
     const response = await fetch(googleSearchURL, { headers: { "User-Agent": "Mozilla/5.0" } });
