@@ -339,8 +339,12 @@ async function fetchGoogleSearchData(url) {
     const cleanedData = {
       engine: tbmMapping[tbm] || "web",
       query: query || '',
+      spelling: data.spelling || undefined,
       searchInformation: data.searchInformation || {},
-      items: (data.items || []).map(({ kind, ...rest }) => rest)
+      items: (data.items || []).map(({ kind, ...rest }) => rest),
+      queries: {
+        request: data.queries?.request || []
+      }
     };
     
     return new Response(JSON.stringify(cleanedData), {
