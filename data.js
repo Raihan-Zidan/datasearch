@@ -342,12 +342,12 @@ async function fetchGoogleSearchData(url) {
       spelling: data.spelling || undefined,
       searchInformation: data.searchInformation || {},
       items: (data.items || []).map(({ kind, ...rest }) => rest),
-      queries: {
-        nextPage: data.queries?.nextPage?.length ? data.queries.nextPage : []
-      }
     };
     if (data.spelling?.correctedQuery) {
       cleanedData.spelling = { correctedQuery: data.spelling.correctedQuery };
+    }
+    if ("nextPage" in (data.queries || {})) {
+      cleanedData.queries.nextPage = [];
     }
     return new Response(JSON.stringify(cleanedData), {
       headers: {
