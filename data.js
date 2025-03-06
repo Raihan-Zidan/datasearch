@@ -343,10 +343,12 @@ async function fetchGoogleSearchData(url) {
       searchInformation: data.searchInformation || {},
       items: (data.items || []).map(({ kind, ...rest }) => rest),
       queries: {
-        request: data.queries?.request || []
+        nextPage: data.queries?.nextPage?.length ? data.queries.nextPage : []
       }
     };
-    
+    if (data.spelling?.correctedQuery) {
+      cleanedData.spelling = { correctedQuery: data.spelling.correctedQuery };
+    }
     return new Response(JSON.stringify(cleanedData), {
       headers: {
         "Content-Type": "application/json",
