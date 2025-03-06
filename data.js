@@ -346,7 +346,7 @@ async function fetchGoogleSearchData(url) {
     if (data.spelling?.correctedQuery) {
       cleanedData.spelling = { correctedQuery: data.spelling.correctedQuery };
     }
-    if ("nextPage" in (data.queries || {})) {
+    if (data.queries?.nextPage !== undefined) {
       cleanedData.queries.nextPage = [];
     }
     return new Response(JSON.stringify(cleanedData), {
