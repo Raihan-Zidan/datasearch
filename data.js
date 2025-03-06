@@ -340,15 +340,16 @@ async function fetchGoogleSearchData(url) {
       engine: tbmMapping[tbm] || "web",
       query: query || '',
       spelling: data.spelling || undefined,
-      searchInformation: data.searchInformation || {},
+      searchInformation: data.searchInformation || undefined,
       items: (data.items || []).map(({ kind, ...rest }) => rest),
     };
     if (data.spelling?.correctedQuery) {
       cleanedData.spelling = { correctedQuery: data.spelling.correctedQuery };
     }
     if (data.queries?.nextPage !== undefined) {
-      cleanedData.queries.nextPage = [];
+      cleanedData.queries = { nextPage: [] };
     }
+
     return new Response(JSON.stringify(cleanedData), {
       headers: {
         "Content-Type": "application/json",
