@@ -331,7 +331,19 @@ async function fetchGoogleSearchData(url) {
     }
     const data = await response.json();
 
-    return new Response(JSON.stringify(data), {
+    const tbmMapping = {
+      nws: "news",
+      vid: "video"
+    };
+    
+    const cleanedData = {
+      engine: tbmMapping[tbm] || "web",
+      query: query || '',
+      searchInformation: data.searchInformation || {},
+      items: (data.items || []).map(({ kind, ...rest }) => rest)
+    };
+    
+    return new Response(JSON.stringify(cleanedData), {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
