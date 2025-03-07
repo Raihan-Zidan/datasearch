@@ -260,6 +260,7 @@ async function fetchSitelinks() {
     return eval(text); // Mengubah JS ke array
   } catch (err) {
     return []; // Kalau error, return array kosong
+    console.log(err.message);
   }
 }
 
@@ -275,7 +276,7 @@ async function fetchGoogleSearchData(url) {
     const lr = url.searchParams.get("lr");
     const cb = url.searchParams.get("cb");
     const sitelinks = await fetchSitelinks();
-    
+    console.log(sitelinks);
     if (!query) {
       return new Response(JSON.stringify({ error: "Parameter q diperlukan." }), {
         headers: { "Content-Type": "application/json" },
@@ -352,19 +353,22 @@ async function fetchGoogleSearchData(url) {
       query: query || '',
       spelling: data.spelling || undefined,
       searchInformation: data.searchInformation || undefined,
-    items: (data.items || []).map(({ 
-      kind, id, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest 
-    }) => {
-      // Cari sitelinks yang cocok dengan item.link
-      const matchedSitelinks = sitelinks.find(s => s.site === rest.link);
-      
-      return {
-        ...rest,
-        id: id ? { ...id, kind: undefined } : undefined, // Hapus id.kind
-        sitelinks: matchedSitelinks 
-          ? matchedSitelinks.links.map(([title, link, snippet]) => ({ title, link, snippet }))
-          : undefined // Ubah format sitelinks jadi objek
-      };
+    items: (data.items || []).map((item, i) => {
+      const { kind, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest } = item;
+
+      // Cocokkan item.link dengan sitelinks.site
+      const matchedSitelinks = sitelinks.find(s => s.site === item.link);
+    
+      // Tambahkan sitelinks ke item jika cocok
+      if (matchedSitelinks) {
+        rest.sitelinks = matchedSitelinks.links.map(([title, link, snippet]) => ({
+          title,
+          link,
+          snippet,
+        }));
+      }
+
+      return rest;
     }),
       
     };
