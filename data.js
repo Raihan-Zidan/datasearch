@@ -231,7 +231,7 @@ async function afetchGoogleFavicon(url) {
 
 async function fetchGoogleFavicon(originalURL) {
   if (!originalURL) {
-    return new Response(JSON.stringify({ error: "Permintaan tidak valid." }), {
+    return new Response(JSON.stringify({ error: `Permintaan tidak valid. ${originalURL}` }), {
       headers: { "Content-Type": "application/json" },
       status: 400,
     });
