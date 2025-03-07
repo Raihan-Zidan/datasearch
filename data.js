@@ -9,7 +9,7 @@ export default {
       return await proxyGambar(request);
     } else if (path.startsWith("/suggest")) {
       return await fetchEcosiaSuggestions(url);
-    } else if (path.startsWith("/favicon")) {
+    } else if (path.startsWith("/img/")) {
       const encodedString = path.slice(5); // Ambil string setelah "/img/"
       const originalURL = decodeURL(encodedString);
       return await fetchGoogleFavicon(originalURL);
