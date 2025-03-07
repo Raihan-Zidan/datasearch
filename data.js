@@ -21,6 +21,33 @@ export default {
   },
 };
 
+  const charMap = {
+    'a': 'XyZ', 'b': 'LmN', 'c': 'PoQ', 'd': 'AbC', 'e': 'EfG', 'f': 'HiJ',
+    'g': 'KlM', 'h': 'NoP', 'i': 'QrS', 'j': 'TuV', 'k': 'WxY', 'l': 'ZaB',
+    'm': 'CdE', 'n': 'FgH', 'o': 'IjK', 'p': 'LmO', 'q': 'NpR', 'r': 'StU',
+    's': 'VwX', 't': 'YzA', 'u': 'BcD', 'v': 'EfH', 'w': 'GhJ', 'x': 'KlO',
+    'y': 'MnQ', 'z': 'PrT', '0': 'UoV', '1': 'WxZ', '2': 'AaB', '3': 'CcD',
+    '4': 'EeF', '5': 'GgH', '6': 'IiJ', '7': 'KkL', '8': 'MmN', '9': 'OoP',
+    ':': 'QqR', '/': 'SsT', '.': 'UuV', '-': 'WwX', '_': 'YyZ'
+};
+
+const reverseMap = Object.fromEntries(
+    Object.entries(charMap).map(([k, v]) => [v, k])
+);
+
+function encodeURL(url) {
+    return url.split('').map(char => charMap[char] || char).join('');
+}
+
+function decodeURL(encoded) {
+    let decoded = '';
+    for (let i = 0; i < encoded.length; i += 3) {
+        let chunk = encoded.substring(i, i + 3);
+        decoded += reverseMap[chunk] || chunk;
+    }
+    return decoded;
+}
+
 async function fetchDuckDuckGoData(url) {
   const query = url.searchParams.get("q");
 
