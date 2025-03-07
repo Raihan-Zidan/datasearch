@@ -324,15 +324,15 @@ async function fetchGoogleSearchData(url) {
     const response = await fetch(googleSearchURL, { headers: { "User-Agent": "Mozilla/5.0" } });
     const res = await fetch("https://raihan-zidan.github.io/sitelinks.js");
     const text = await res.text();
-
+    const sitelinks = eval(text);
     
-      return new Response(JSON.stringify({ eval(text) }), {
+      return new Response(JSON.stringify({ sitelinks }), {
         headers: { "Content-Type": "application/json" },
         status: response.status,
       });
     
     
-    const sitelinks = eval(text);
+
     if (!response.ok) {
       return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
         headers: { "Content-Type": "application/json" },
