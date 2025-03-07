@@ -325,12 +325,12 @@ async function fetchGoogleSearchData(url) {
     const res = await fetch("https://raihan-zidan.github.io/sitelinks.js");
     const text = await res.text();
 
-    if (!res.ok) {
-      return new Response(JSON.stringify({ error: "Terjadi kesalahan pada sitelinks" }), {
+    
+      return new Response(JSON.stringify({ error: text }), {
         headers: { "Content-Type": "application/json" },
         status: response.status,
       });
-    }
+    
     
     const sitelinks = eval(text);
     if (!response.ok) {
