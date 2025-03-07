@@ -352,17 +352,7 @@ async function fetchGoogleSearchData(url) {
     items: (data.items || []).map((item, i) => {
       const { kind, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest } = item;
 
-      // Cocokkan item.link dengan sitelinks.site
-      const matchedSitelinks = sitelinks.find(s => s.site === item.link);
-    
-      // Tambahkan sitelinks ke item jika cocok
-      if (matchedSitelinks) {
-        rest.sitelinks = matchedSitelinks.links.map(([title, link, snippet]) => ({
-          title,
-          link,
-          snippet,
-        }));
-      }
+
 
       return rest;
     }),
