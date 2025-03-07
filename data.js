@@ -320,17 +320,10 @@ async function fetchGoogleSearchData(url) {
       if (lr) googleSearchURL += `&lr=${lr}`;
       if (cb) googleSearchURL += `&callback=${cb}`;
     }
-
     const response = await fetch(googleSearchURL, { headers: { "User-Agent": "Mozilla/5.0" } });
-    const res = await fetch("https://raihan-zidan.github.io/sitelinks.js");
-    const text = await res.text();
-
-    eval(text);
-    var nilaiData = eval('sitelinks');
-    
 
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: nilaiData }), {
+      return new Response(JSON.stringify({ error: "Terjadi kesahalan" }), {
         headers: { "Content-Type": "application/json" },
         status: response.status,
       });
