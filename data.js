@@ -352,12 +352,20 @@ async function fetchGoogleSearchData(url) {
       query: query || '',
       spelling: data.spelling || undefined,
       searchInformation: data.searchInformation || undefined,
-        items: (data.items || []).map(({ 
-    kind, id, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest 
-  }) => ({
-    ...rest,
-    id: id ? { ...id, kind: undefined } : undefined, // Hapus id.kind
-  })),
+    items: (data.items || []).map(({ 
+      kind, id, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest 
+    }) => {
+      // Cari sitelinks yang cocok dengan item.link
+      const matchedSitelinks = sitelinks.find(s => s.site === rest.link);
+      
+      return {
+        ...rest,
+        id: id ? { ...id, kind: undefined } : undefined, // Hapus id.kind
+        sitelinks: matchedSitelinks 
+          ? matchedSitelinks.links.map(([title, link, snippet]) => ({ title, link, snippet }))
+          : undefined // Ubah format sitelinks jadi objek
+      };
+    }),
       
     };
     if (data.spelling?.correctedQuery) {
