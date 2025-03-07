@@ -253,17 +253,6 @@ async function fetchGoogleFavicon(url) {
 
 // search api //
 
-async function fetchSitelinks() {
-  try {
-    const res = await fetch("https://raihan-zidan.github.io/sitelinks.js");
-    const text = await res.text();
-    return eval(text); // Mengubah JS ke array
-  } catch (err) {
-    return []; // Kalau error, return array kosong
-    console.log(err.message);
-  }
-}
-
 async function fetchGoogleSearchData(url) {
   try {
     const query = url.searchParams.get("q");
@@ -275,8 +264,7 @@ async function fetchGoogleSearchData(url) {
     const hl = url.searchParams.get("hl");
     const lr = url.searchParams.get("lr");
     const cb = url.searchParams.get("cb");
-    const sitelinks = await fetchSitelinks();
-    console.log(sitelinks);
+   
     if (!query) {
       return new Response(JSON.stringify({ error: "Parameter q diperlukan." }), {
         headers: { "Content-Type": "application/json" },
@@ -334,7 +322,17 @@ async function fetchGoogleSearchData(url) {
     }
 
     const response = await fetch(googleSearchURL, { headers: { "User-Agent": "Mozilla/5.0" } });
+    const res = await fetch("https://raihan-zidan.github.io/sitelinks.js");
+    const text = await res.text();
 
+    if (!res.ok) {
+      return new Response(JSON.stringify({ error: "Terjadi kesalahan pada sitelinks" }), {
+        headers: { "Content-Type": "application/json" },
+        status: response.status,
+      });
+    }
+    
+    const sitelinks = eval(text);
     if (!response.ok) {
       return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
         headers: { "Content-Type": "application/json" },
