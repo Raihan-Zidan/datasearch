@@ -253,6 +253,16 @@ async function fetchGoogleFavicon(url) {
 
 // search api //
 
+async function fetchSitelinks() {
+  try {
+    const res = await fetch("https://raihan-zidan.github.io/sitelinks.js");
+    const text = await res.text();
+    return eval(text); // Mengubah JS ke array
+  } catch (err) {
+    return []; // Kalau error, return array kosong
+  }
+}
+
 async function fetchGoogleSearchData(url) {
   try {
     const query = url.searchParams.get("q");
@@ -264,6 +274,7 @@ async function fetchGoogleSearchData(url) {
     const hl = url.searchParams.get("hl");
     const lr = url.searchParams.get("lr");
     const cb = url.searchParams.get("cb");
+    const sitelinks = await fetchSitelinks();
     
     if (!query) {
       return new Response(JSON.stringify({ error: "Parameter q diperlukan." }), {
