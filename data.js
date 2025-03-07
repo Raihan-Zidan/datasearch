@@ -328,11 +328,9 @@ async function fetchGoogleSearchData(url) {
     eval(text);
     var nilaiData = eval('sitelinks');
     
-      return nilaiData;
-    
 
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: "Terjadi kesalahan." }), {
+      return new Response(JSON.stringify({ error: nilaiData }), {
         headers: { "Content-Type": "application/json" },
         status: response.status,
       });
