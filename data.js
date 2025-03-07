@@ -326,7 +326,7 @@ async function fetchGoogleSearchData(url) {
     const text = await res.text();
 
     
-      return new Response(JSON.stringify({ error: text }), {
+      return new Response(JSON.stringify({ eval(text) }), {
         headers: { "Content-Type": "application/json" },
         status: response.status,
       });
