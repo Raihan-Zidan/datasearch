@@ -341,7 +341,13 @@ async function fetchGoogleSearchData(url) {
       query: query || '',
       spelling: data.spelling || undefined,
       searchInformation: data.searchInformation || undefined,
-      items: (data.items || []).map(({ kind, ...rest }) => rest),
+        items: (data.items || []).map(({ 
+    kind, id, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest 
+  }) => ({
+    ...rest,
+    id: id ? { ...id, kind: undefined } : undefined, // Hapus id.kind
+  })),
+      
     };
     if (data.spelling?.correctedQuery) {
       cleanedData.spelling = { correctedQuery: data.spelling.correctedQuery };
