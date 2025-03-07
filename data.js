@@ -10,7 +10,9 @@ export default {
     } else if (path.startsWith("/suggest")) {
       return await fetchEcosiaSuggestions(url);
     } else if (path.startsWith("/favicon")) {
-      return await fetchGoogleFavicon(url);
+      const encodedString = path.slice(5); // Ambil string setelah "/img/"
+      const originalURL = decodeURL(encodedString);
+      return await fetchGoogleFavicon(originalURL);
     } else if (path.startsWith("/api")) {
       return await fetchGoogleSearchData(url);
     } else {
@@ -200,17 +202,16 @@ async function afetchGoogleFavicon(url) {
 }
 
 
-async function fetchGoogleFavicon(url) {
-  const site = url.searchParams.get("url");
-  if (!site) {
-    return new Response(JSON.stringify({ error: "Parameter tidak valid." }), {
+async function fetchGoogleFavicon(originalURL) {
+  if (!originalURL) {
+    return new Response(JSON.stringify({ error: "Permintaan tidak valid." }), {
       headers: { "Content-Type": "application/json" },
       status: 400,
     });
     console.log("error oi");
   }
 
-  const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(site)}`;
+  const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(originalURL)}`;
 
   // SVG default jika favicon tidak ditemukan
   const defaultFaviconSVG = `
