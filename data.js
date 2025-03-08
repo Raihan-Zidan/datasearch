@@ -370,9 +370,6 @@ async function fetchGoogleSearchData(url, request) {
       searchInformation: data.searchInformation || undefined,
       items: (data.items || []).map((item, i) => {
         const { kind, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest } = item;
-
-
-
         return { position: i, ...rest };
       }),
       
@@ -391,7 +388,9 @@ async function fetchGoogleSearchData(url, request) {
       "Access-Control-Allow-Headers": "Content-Type",
       "Vary": "Origin" 
     });
-
+    if (requestOrigin !== allowedOrigin) {
+      return new Response(null, { headers: responseHeaders });
+    }
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: responseHeaders });
     }
