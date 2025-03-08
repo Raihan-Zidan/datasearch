@@ -387,7 +387,7 @@ async function fetchGoogleSearchData(url, request) {
     const allowedOrigin = "https://raihan-zidan.github.io/";
     const responseHeaders = {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": allowedOrigin,
+      "Access-Control-Allow-Origin": "*",
     };
 
     if (typeof Request !== "undefined") {
