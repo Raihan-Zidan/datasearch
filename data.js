@@ -388,7 +388,7 @@ async function fetchGoogleSearchData(url, request) {
       "Access-Control-Allow-Headers": "Content-Type",
       "Vary": "Origin" 
     });
-    if (requestOrigin !== allowedOrigin) {
+    if (request.headers.get("Origin") !== allowedOrigin) {
       return new Response(null, { headers: responseHeaders });
     }
     if (request.method === "OPTIONS") {
