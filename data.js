@@ -383,21 +383,17 @@ async function fetchGoogleSearchData(url, request) {
     if (data.queries?.nextPage !== undefined) {
       cleanedData.queries = { nextPage: [] };
     }
-
-    const allowedOrigin = "https://raihan-zidan.github.io/";
-    const responseHeaders = {
+    const allowedOrigin = "https://raihan-zidan.github.io"
+    const responseHeaders = new Headers({
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": allowedOrigin,
-    };
+      "Access-Control-Allow-Origin": allowedOrigin, 
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Vary": "Origin" 
+    });
 
-    if (typeof Request !== "undefined") {
-      const requestOrigin = request.headers.get("Origin");
-      if (requestOrigin !== allowedOrigin) {
-        return new Response(JSON.stringify({ error: "Akses ditolak." }), {
-          headers: { "Content-Type": "application/json" },
-          status: 403,
-        });
-      }
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: responseHeaders });
     }
     return new Response(JSON.stringify(cleanedData), {
       headers: responseHeaders
