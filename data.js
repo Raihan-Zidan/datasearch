@@ -393,7 +393,7 @@ async function fetchGoogleSearchData(url) {
     if (typeof Request !== "undefined") {
       const requestOrigin = Request.headers.get("Origin");
       if (requestOrigin !== allowedOrigin) {
-        return new Response(JSON.stringify({ null }), { status: 403 });
+        return new Response("null"), { status: 403 });
       }
     }
     return new Response(JSON.stringify(cleanedData), {
