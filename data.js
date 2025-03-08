@@ -14,7 +14,7 @@ export default {
       const originalURL = decodeURL(encodedString);
       return await fetchGoogleFavicon(originalURL);
     } else if (path.startsWith("/api")) {
-      return await fetchGoogleSearchData(url);
+      return await fetchGoogleSearchData(url, request);
     } else {
       return await fetchDuckDuckGoData(url);
     }
@@ -281,7 +281,7 @@ async function fetchGoogleFavicon(originalURL) {
 
 // search api //
 
-async function fetchGoogleSearchData(url) {
+async function fetchGoogleSearchData(url, request) {
   try {
     const query = url.searchParams.get("q");
     const tbm = url.searchParams.get("tbm");
