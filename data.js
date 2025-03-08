@@ -391,7 +391,7 @@ async function fetchGoogleSearchData(url, request) {
     };
 
     if (typeof Request !== "undefined") {
-      const requestOrigin = Request.headers.get("Origin");
+      const requestOrigin = request.headers.get("Origin");
       if (requestOrigin !== allowedOrigin) {
         return new Response(JSON.stringify({ error: "Akses ditolak." }), {
           headers: { "Content-Type": "application/json" },
