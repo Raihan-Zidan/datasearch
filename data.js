@@ -384,11 +384,20 @@ async function fetchGoogleSearchData(url) {
       cleanedData.queries = { nextPage: [] };
     }
 
+    const allowedOrigin = "https://raihan-zidan.github.io/";
+    const responseHeaders = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": allowedOrigin,
+    };
+
+    if (typeof Request !== "undefined") {
+      const requestOrigin = Request.headers.get("Origin");
+      if (requestOrigin !== allowedOrigin) {
+        return new Response(JSON.stringify({ null }), { status: 403 });
+      }
+    }
     return new Response(JSON.stringify(cleanedData), {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
+      headers: responseHeaders
     });
 
   } catch (error) {
