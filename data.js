@@ -404,7 +404,7 @@ async function fetchGoogleSearchData(url) {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Terjadi kesalahan" }), {
+    return new Response(JSON.stringify({ error: `Terjadi kesalahan: ${error.message}` }), {
       headers: { "Content-Type": "application/json" },
       status: 500,
     });
