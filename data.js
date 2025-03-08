@@ -373,7 +373,7 @@ async function fetchGoogleSearchData(url) {
 
 
 
-      return rest;
+      return { position: i, rest };
     }),
       
     };
