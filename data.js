@@ -368,13 +368,13 @@ async function fetchGoogleSearchData(url) {
       query: query || '',
       spelling: data.spelling || undefined,
       searchInformation: data.searchInformation || undefined,
-    items: (data.items || []).map((item, i) => {
-      const { kind, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest } = item;
+      items: (data.items || []).map((item, i) => {
+        const { kind, htmlTitle, htmlSnippet, formattedUrl, htmlFormattedUrl, ...rest } = item;
 
 
 
-      return { position: i, rest };
-    }),
+        return { position: i, ...rest };
+      }),
       
     };
     if (data.spelling?.correctedQuery) {
